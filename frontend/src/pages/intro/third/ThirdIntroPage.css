@@ -6,7 +6,6 @@ body {
   justify-content: center;
 }
 
-/* Container styling */
 .container {
   background-color: #ffffff;
   font-family: Arial, sans-serif;
@@ -18,7 +17,6 @@ body {
   padding: 25px;
 }
 
-/* Close button styling */
 .close-button {
   position: absolute;
   top: 20px;
@@ -30,15 +28,13 @@ body {
   cursor: pointer;
 }
 
-/* Uniform image styling for all intro images */
 .intro-img {
-  width: 500px; /* Force width to 500px */
-  height: 500px; /* Force height to 500px */
+  width: 500px;
+  height: 500px;
   object-fit: cover;
   margin: 20px 0;
 }
 
-/* Intro text styling */
 .intro-text {
   font-size: 18px;
   font-weight: 600;
@@ -47,13 +43,11 @@ body {
   padding: 0 10px;
 }
 
-/* Progress bar container styling */
 .progress-bar {
   width: 90%;
   margin: 20px 0;
 }
 
-/* Native progress element styling */
 progress {
   width: 100%;
   height: 10px;
@@ -70,7 +64,6 @@ progress::-webkit-progress-value {
   border-radius: 5px;
 }
 
-/* Next button styling */
 .next-button {
   margin-top: 20px;
   padding: 12px 40px;
