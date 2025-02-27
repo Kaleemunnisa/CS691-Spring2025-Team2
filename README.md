@@ -49,7 +49,8 @@ The **Weather-Oriented Clothing Recommendation System** will leverage weather fo
 - **Database:** PostgreSQL / Firebase  
 - **Weather API:** OpenWeatherMap / WeatherStack  
 - **AI & ML Models:** TensorFlow / Scikit-learn for recommendation engine  
-- **Cloud Hosting:** AWS / Google Cloud  
+- **Cloud Hosting:** AWS / Google Cloud
+- - **Design**: Figma
 
 ## **Expected Benefits**
 - **Time-Saving:** Eliminates the hassle of manually choosing outfits.  
