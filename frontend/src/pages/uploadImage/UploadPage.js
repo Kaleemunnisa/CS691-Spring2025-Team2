@@ -46,8 +46,13 @@ const UploadPage = () => {
 
             setLoading(false);
 
-            // Redirect to Image Details Page with classification data
-            navigate(`/details/${image_id}`, {
+            // ✅ Validate if ID exists before navigating
+            if (!classifyResponse.data.saved_clothing_id) {
+                throw new Error("Saved clothing ID not found.");
+            }
+
+            // Redirect only if clothing ID is valid
+            navigate(`/details/${classifyResponse.data.saved_clothing_id}`, {
                 state: {
                     image_url: image_url,
                     clothing_classification: classifyResponse.data.clothing_classification,
@@ -64,8 +69,8 @@ const UploadPage = () => {
     };
 
     return (
-        <div className="page-container">
-            <HeaderBar/>
+        <div className="upload-page-container">
+            <HeaderBar />
 
             <h2 className="upload-title">Upload Your Clothing Item</h2>
 

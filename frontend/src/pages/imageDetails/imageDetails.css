@@ -26,10 +26,25 @@
   color: #333;
 }
 
+.closebutton{
+  position: absolute;
+  right: 38%;
+  /* top: 10px; */
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #333;
+}
+
+.close-button:hover {
+  color: #555;
+}
+
 /* Edit Button - Positioned on the Right */
 .edit-button {
   position: absolute;
-  right: 40%;
+  left: 60%;
   background: none;
   border: none;
   font-size: 18px;
@@ -112,10 +127,10 @@
   display: flex;
   width: 100%;
   justify-content: center;
-  margin-top: 15px;
 }
 /* Save Button */
 .save-button {
+  margin-top: 15px;
   padding: 12px;
   width: 100%;
   max-width: 400px;
@@ -133,4 +148,21 @@
 
 .save-button:hover {
   background-color: rgba(100, 180, 210, 1);
+}
+
+.recommend-button {
+  width: 100%;
+  padding: 12px;
+  background-color: rgba(134, 209, 234, 1);
+  color: black;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.recommend-button:hover {
+  background-color: rgba(115, 180, 202, 1);
 }
