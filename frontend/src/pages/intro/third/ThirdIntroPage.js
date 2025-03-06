@@ -7,11 +7,11 @@ const ThirdIntroPage = () => {
   const navigate = useNavigate();
 
   const handleNext = () => {
-    navigate("/home");
+    navigate("/signup"); // Redirects to the Signup page instead of /wardrobe
   };
 
   const handleClose = () => {
-    navigate("/home");
+    navigate("/login"); // Redirects to the Login page when closing
   };
 
   return (
@@ -23,7 +23,7 @@ const ThirdIntroPage = () => {
       <img
         className="third-intro-img"
         src={ThirdIntroImage}
-        alt="SecondIntroPage"
+        alt="ThirdIntroPage"
       />
 
       <h2 className="intro-text">Trending Styles For Any Weather Condition</h2>

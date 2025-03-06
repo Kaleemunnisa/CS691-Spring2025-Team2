@@ -1,0 +1,136 @@
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); */
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+  
+  .auth-box {
+    width: 100%;
+    max-width: 100%;
+    padding: 40px;
+    background-color: white;
+    border-radius: 0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .auth-box:hover {
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+  }
+  
+  .auth-box .MuiTypography-h4 {
+    margin-bottom: 24px;
+    color: #333;
+    font-weight: 700;
+  }
+  
+  .auth-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+  }
+  
+  .auth-box .MuiTextField-root {
+    margin-bottom: 0;
+  }
+  
+  .auth-box .MuiInputBase-root {
+    border-radius: 8px;
+  }
+  
+  .auth-box .MuiButton-root {
+    padding: 12px 0;
+    margin-top: 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: none;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+  }
+  
+  .auth-box .MuiButton-root:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+  }
+  
+  .auth-box .MuiButton-root:active {
+    transform: translateY(1px);
+  }
+  
+  .auth-link {
+    color: #4285F4;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .auth-link:hover {
+    color: #3367D6;
+    text-decoration: underline;
+  }
+  
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    margin: 24px 0;
+    color: #888;
+    width: 100%;
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .auth-divider::before,
+  .auth-divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .auth-divider::before {
+    margin-right: 16px;
+  }
+  
+  .auth-divider::after {
+    margin-left: 16px;
+  }
+  
+  .auth-social-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .auth-footer {
+    width: 100%;
+    max-width: 450px;
+    margin: 24px auto 0;
+  }
+  
+  /* Media query for larger screens */
+  @media (min-width: 768px) {
+    .auth-container {
+      padding: 20px;
+    }
+    
+    .auth-box {
+      max-width: 550px;
+      min-height: auto;
+      border-radius: 16px;
+    }
+  }
