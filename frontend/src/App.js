@@ -6,6 +6,7 @@ import ThirdIntroPage from "./pages/intro/third/ThirdIntroPage";
 import Login from "./pages/authentication/Login";
 import SignUp from "./pages/authentication/SignUp";
 import UploadPage from "./pages/uploadImage/UploadPage";
+import ImageDetails from "./pages/imageDetails/imageDetails";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/upload" element={<UploadPage />} />
+        <Route path="/details/:id" element={<ImageDetails />} />
       </Routes>
     </Router>
   );
