@@ -98,65 +98,70 @@ function ClothingList() {
   };
 
   return (
-    <div className="wardrobe-grid">
-      {clothingItems.map((item) => (
-        <div key={item._id} className="wardrobe-item">
-          <button
-            className="delete-icon"
-            onClick={() => confirmDelete(item._id)}
-          >
-            <MdDeleteOutline />
-          </button>
+    <div className="wardrobe-container">
+      <h1 className="wardrobe-heading">My Wardrobe</h1>
+      <div className="wardrobe-grid">
+        {clothingItems.map((item) => (
+          <div key={item._id} className="wardrobe-item">
+            <button
+              className="delete-icon"
+              onClick={() => confirmDelete(item._id)}
+            >
+              <MdDeleteOutline />
+            </button>
 
-          <img
-            src={item.image_url}
-            alt={item.clothing_classification}
-            className="clothing-image"
-          />
-          <button className="heart-icon" onClick={() => toggleLike(item._id)}>
-            {likedItems[item._id] ? (
-              <IoMdHeart color="red" />
-            ) : (
-              <IoMdHeartEmpty />
-            )}
-          </button>
+            <img
+              src={item.image_url}
+              alt={item.clothing_classification}
+              className="clothing-image"
+            />
+            <button className="heart-icon" onClick={() => toggleLike(item._id)}>
+              {likedItems[item._id] ? (
+                <IoMdHeart color="red" />
+              ) : (
+                <IoMdHeartEmpty />
+              )}
+            </button>
 
-          <div className="clothing-info">
-            {editItemId === item._id ? (
-              <>
-                <input
-                  type="text"
-                  name="clothing_classification"
-                  value={editData.clothing_classification}
-                  onChange={handleEditChange}
-                  className="edit-input"
-                />
-                <input
-                  type="text"
-                  name="detected_color"
-                  value={editData.detected_color}
-                  onChange={handleEditChange}
-                  className="edit-input"
-                />
-                <button
-                  className="save-button"
-                  onClick={() => saveEdit(item._id)}
-                >
-                  Save
-                </button>
-              </>
-            ) : (
-              <>
-                <p className="clothing-name">{item.clothing_classification}</p>
-                <p className="clothing-class">Color: {item.detected_color}</p>
-                <button className="edit-icon" onClick={() => startEdit(item)}>
-                  <FaEdit />
-                </button>
-              </>
-            )}
+            <div className="clothing-info">
+              {editItemId === item._id ? (
+                <>
+                  <input
+                    type="text"
+                    name="clothing_classification"
+                    value={editData.clothing_classification}
+                    onChange={handleEditChange}
+                    className="edit-input"
+                  />
+                  <input
+                    type="text"
+                    name="detected_color"
+                    value={editData.detected_color}
+                    onChange={handleEditChange}
+                    className="edit-input"
+                  />
+                  <button
+                    className="save-button"
+                    onClick={() => saveEdit(item._id)}
+                  >
+                    Save
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="clothing-name">
+                    {item.clothing_classification}
+                  </p>
+                  <p className="clothing-class">Color: {item.detected_color}</p>
+                  <button className="edit-icon" onClick={() => startEdit(item)}>
+                    <FaEdit />
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
