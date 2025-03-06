@@ -10,8 +10,8 @@ const {
 const router = express.Router();
 
 router.post("/classify", classifyClothingItem);
-router.get("/:id", getClothingDetails);
 router.get("/get-clothing", getAllClothingByUser);
+router.get("/:id", getClothingDetails);
 router.put("/edit-clothing/:id", editClothing);
 router.delete("/delete-clothing/:id", deleteClothing);
 
