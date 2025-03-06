@@ -2,11 +2,16 @@ import React, { useEffect, useState } from "react";
 import "./ClothingList.css";
 import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
 import { MdDeleteOutline } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
 
 function ClothingList() {
   const [clothingItems, setClothingItems] = useState([]);
   const [likedItems, setLikedItems] = useState({});
 
+  const [editItemId, setEditItemId] = useState(null);
+  const [editData, setEditData] = useState({});
+
+  // Fetch clothing items from the server before rendering
   useEffect(() => {
     fetch("/api/clothing/get-clothing?user_id=user123")
       .then((response) => response.json())
@@ -22,6 +27,7 @@ function ClothingList() {
       .catch((error) => console.error("Error fetching clothing:", error));
   }, []);
 
+  // Toggle like status
   const toggleLike = (id) => {
     setLikedItems((prevState) => ({
       ...prevState,
@@ -29,6 +35,7 @@ function ClothingList() {
     }));
   };
 
+  // Confirm before deleting the item
   const confirmDelete = (id) => {
     const item = clothingItems.find((item) => item._id === id);
     if (
@@ -40,6 +47,7 @@ function ClothingList() {
     }
   };
 
+  // Delete the item
   const deleteItem = (id) => {
     fetch(`/api/clothing/delete-clothing/${id}`, {
       method: "DELETE",
@@ -54,6 +62,39 @@ function ClothingList() {
         }
       })
       .catch((error) => console.error("Error deleting item:", error));
+  };
+
+  const startEdit = (item) => {
+    setEditItemId(item._id);
+    setEditData({
+      clothing_classification: item.clothing_classification,
+      detected_color: item.detected_color,
+    });
+  };
+
+  // Update the edited item
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Save the edited item
+  const saveEdit = (id) => {
+    fetch(`/api/clothing/edit-clothing/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(editData),
+    })
+      .then((response) => response.json())
+      .then((updatedItem) => {
+        setClothingItems((prevItems) =>
+          prevItems.map((item) => (item._id === id ? updatedItem : item))
+        );
+        setEditItemId(null);
+      })
+      .catch((error) => console.error("Error updating item:", error));
   };
 
   return (
@@ -81,8 +122,38 @@ function ClothingList() {
           </button>
 
           <div className="clothing-info">
-            <p className="clothing-name">{item.clothing_classification}</p>
-            <p className="clothing-class">Color: {item.detected_color}</p>
+            {editItemId === item._id ? (
+              <>
+                <input
+                  type="text"
+                  name="clothing_classification"
+                  value={editData.clothing_classification}
+                  onChange={handleEditChange}
+                  className="edit-input"
+                />
+                <input
+                  type="text"
+                  name="detected_color"
+                  value={editData.detected_color}
+                  onChange={handleEditChange}
+                  className="edit-input"
+                />
+                <button
+                  className="save-button"
+                  onClick={() => saveEdit(item._id)}
+                >
+                  Save
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="clothing-name">{item.clothing_classification}</p>
+                <p className="clothing-class">Color: {item.detected_color}</p>
+                <button className="edit-icon" onClick={() => startEdit(item)}>
+                  <FaEdit />
+                </button>
+              </>
+            )}
           </div>
         </div>
       ))}
