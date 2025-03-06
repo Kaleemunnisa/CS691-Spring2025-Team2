@@ -69,7 +69,7 @@ const UploadPage = () => {
     };
 
     return (
-        <div className="page-container">
+        <div className="upload-page-container">
             <HeaderBar />
 
             <h2 className="upload-title">Upload Your Clothing Item</h2>

@@ -37,7 +37,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="page-container">
+    <div className="home-page-container">
       <HeaderBar />
       <div className="home-container">
         <div className="weather-info">
