@@ -44,7 +44,7 @@ const Login = () => {
       const res = await login(credentials);
       
       if (res.success) {
-        navigate("/profile");
+        navigate("/home");
       } else {
         setError(res.message);
       }
