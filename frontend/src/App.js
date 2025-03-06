@@ -5,6 +5,7 @@ import SecondIntroPage from "./pages/intro/second/SecondIntroPage";
 import ThirdIntroPage from "./pages/intro/third/ThirdIntroPage";
 import Login from "./pages/authentication/Login";
 import SignUp from "./pages/authentication/SignUp";
+import Wardrobe from "./pages/wardrobe/Wardrobe";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/thirdIntro" element={<ThirdIntroPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/wardrobe" element={<Wardrobe />} />
       </Routes>
     </Router>
   );

@@ -1,0 +1,51 @@
+/* Sliding Half-Screen Menu */
+.menu-popup {
+  position: fixed;
+  top: 0;
+  right: -50%;
+  width: 50vw;
+  height: 100vh;
+  background-color: #bebebe;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: right 0.3s ease-in-out;
+}
+
+.menu-popup.open {
+  right: 0;
+}
+
+.close-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.menu-icon {
+  width: 60px;
+  margin-bottom: 20px;
+}
+
+.menu-item {
+  width: 80%;
+  padding: 15px;
+  font-size: 18px;
+  border: none;
+  border-radius: 20px;
+  background-color: #a1d3f7;
+  color: black;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.menu-item:active {
+  transform: scale(0.95);
+}
