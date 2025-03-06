@@ -79,11 +79,11 @@ const ImageDetails = () => {
     };
 
     if (loading) {
-        return <div className="page-container"><p>Loading...</p></div>;
+        return <div className="details-page-container"><p>Loading...</p></div>;
     }
 
     return (
-        <div className="page-container">
+        <div className="details-page-container">
             <HeaderBar />
             <div className="details-header">
                 <h2 className="details-title">Image Details</h2>

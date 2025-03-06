@@ -1,5 +1,5 @@
 /* Page Container */
-.page-container {
+.details-page-container {
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -7,6 +7,7 @@
   align-items: center;
   justify-content: flex-start;
   font-family: Arial, sans-serif;
+  margin-top: 90px;
 }
 
 /* Header Section */

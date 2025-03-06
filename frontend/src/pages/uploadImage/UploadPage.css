@@ -5,7 +5,8 @@
   align-items: center;
   font-family: Arial, sans-serif;
   flex-direction: column;
-} */
+  margin-top: 90px;
+} 
 
 .upload-title {
   font-size: 18px;
