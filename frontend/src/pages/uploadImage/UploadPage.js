@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Navbar from "../../components/Navbar";
+// import Navbar from "../../components/Navbar";
 import "./UploadPage.css";
+import HeaderBar from "../../components/header/HeaderBar";
 
 const UploadPage = () => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -64,7 +65,7 @@ const UploadPage = () => {
 
     return (
         <div className="page-container">
-            <Navbar /> {/* Universal Navigation Bar */}
+            <HeaderBar/>
 
             <h2 className="upload-title">Upload Your Clothing Item</h2>
 

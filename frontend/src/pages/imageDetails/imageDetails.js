@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import Navbar from "../../components/Navbar";
 import "./imageDetails.css";
 import { FaEdit } from "react-icons/fa"; // Importing black edit icon
+import HeaderBar from "../../components/header/HeaderBar";
 
 const ImageDetails = () => {
     const location = useLocation();
@@ -28,7 +28,7 @@ const ImageDetails = () => {
 
     return (
         <div className="page-container">
-            <Navbar />
+            <HeaderBar/>
 
             {/* Header Section with Edit Icon */}
             <div className="details-header">
