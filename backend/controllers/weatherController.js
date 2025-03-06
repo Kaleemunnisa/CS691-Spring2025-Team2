@@ -2,13 +2,14 @@ const { fetchRealTimeWeather } = require("../services/weatherService");
 
 exports.getWeather = async (req, res) => {
     try {
-        const { location } = req.query;
-        if (!location) {
-            return res.status(400).json({ error: "⚠ Location is required" });
+        const { lat, lon } = req.query;
+
+        if (!lat || !lon) {
+            return res.status(400).json({ error: "Latitude and Longitude are required" });
         }
 
-        const temperature = await fetchRealTimeWeather(location);
-        res.json({ location, temperature: `${temperature}°C` });
+        const temperature = await fetchRealTimeWeather(lat, lon);
+        res.json({ temperature: `${temperature}°C` });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

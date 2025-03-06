@@ -7,11 +7,11 @@ const ThirdIntroPage = () => {
   const navigate = useNavigate();
 
   const handleNext = () => {
-    navigate("/wardrobe");
+    navigate("/home");
   };
 
   const handleClose = () => {
-    navigate("/login");
+    navigate("/home");
   };
 
   return (

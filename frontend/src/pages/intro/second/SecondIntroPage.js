@@ -11,7 +11,7 @@ const SecondIntroPage = () => {
   };
 
   const handleClose = () => {
-    navigate("/login");
+    navigate("/home");
   };
 
   return (
