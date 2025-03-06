@@ -7,7 +7,6 @@
   align-items: center;
   justify-content: flex-start;
   font-family: Arial, sans-serif;
-  margin-top: 90px;
 }
 
 /* Header Section */
@@ -64,6 +63,7 @@
   width: 350px;
   height: 350px;
   object-fit: cover;
+  align-items: center;
 }
 
 /* Non-Edit Mode: Row Format */
