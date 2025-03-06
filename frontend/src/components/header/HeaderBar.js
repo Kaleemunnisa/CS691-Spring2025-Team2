@@ -18,7 +18,7 @@ function HeaderBar() {
           <IoArrowBackCircleSharp />
         </button>
 
-        <img src={logo} alt="Wardrobe Logo" className="logo" />
+        <a href="/home"><img src={logo} alt="Wardrobe Logo" className="logo" /></a>
 
         <button className="nav-button" onClick={() => setIsMenuOpen(true)}>
           <GiHamburgerMenu />
