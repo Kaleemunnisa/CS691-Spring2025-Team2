@@ -1,7 +1,7 @@
 .wardrobe-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  margin: 30px;
+  margin: 50px;
   gap: 16px;
   width: 90%;
   background-color: white;
@@ -12,6 +12,15 @@
 .wardrobe-item {
   position: relative;
   text-align: center;
+}
+.delete-icon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: none;
+  border: none;
+  font-size: 40px;
+  cursor: pointer;
 }
 
 .clothing-image {
