@@ -21,7 +21,9 @@ mongoose
 const aiRoutes = require("./routes/aiRoutes");
 const clothingRoutes = require("./routes/clothingRoutes");
 const weatherRoutes = require("./routes/weatherRoutes");
+const uploadRoutes = require('./routes/uploadRoutes');
 
+app.use('/api/upload', uploadRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/clothing", clothingRoutes);
 app.use("/api/weather", weatherRoutes);

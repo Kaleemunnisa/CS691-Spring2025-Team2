@@ -5,6 +5,8 @@ import SecondIntroPage from "./pages/intro/second/SecondIntroPage";
 import ThirdIntroPage from "./pages/intro/third/ThirdIntroPage";
 import Login from "./pages/authentication/Login";
 import SignUp from "./pages/authentication/SignUp";
+import UploadPage from "./pages/uploadImage/UploadPage";
+import ImageDetails from "./pages/imageDetails/imageDetails";
 import Wardrobe from "./pages/wardrobe/Wardrobe";
 
 const App = () => {
@@ -16,6 +18,8 @@ const App = () => {
         <Route path="/thirdIntro" element={<ThirdIntroPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/upload" element={<UploadPage />} />
+        <Route path="/details/:id" element={<ImageDetails />} />
         <Route path="/wardrobe" element={<Wardrobe />} />
       </Routes>
     </Router>
