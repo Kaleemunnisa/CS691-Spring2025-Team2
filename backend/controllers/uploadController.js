@@ -49,7 +49,7 @@ exports.uploadImage = async (req, res) => {
         const newImage = new Image({ image_url: imageUrl, user_id });
         await newImage.save();
 
-        res.json({ imageUrl });
+        res.json({ image_id: newImage._id, image_url: newImage.image_url });
     } catch (error) {
         console.error("S3 Upload Error:", error);
         res.status(500).json({ error: 'Upload failed' });

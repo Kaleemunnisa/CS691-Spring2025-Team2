@@ -3,9 +3,9 @@ const Clothing = require("../models/clothingModel");
 
 exports.classifyClothingItem = async (req, res) => {
     try {
-        const { image_url, user_id } = req.body;
-        if (!image_url || !user_id) {
-            return res.status(400).json({ error: "Image URL and user_id are required" });
+        const { image_id, image_url, user_id } = req.body;
+        if (!image_id || !image_url || !user_id) {
+            return res.status(400).json({ error: "Image ID, Image URL, and user_id are required" });
         }
 
         console.log("🟢 Step 1: Identifying clothing...");
@@ -17,10 +17,12 @@ exports.classifyClothingItem = async (req, res) => {
 
         // Store the classification result in database
         const newClothing = new Clothing({
+            image_id,
             image_url,
             user_id,
             clothing_classification: clothing,
             detected_color: detectedColor,
+            image_id: req.body.image_id
         });
 
         await newClothing.save();
@@ -38,7 +40,7 @@ exports.classifyClothingItem = async (req, res) => {
 };
 
 
-exports.getClothingByUser = async (req, res) => {
+exports.getAllClothingByUser = async (req, res) => {
     try {
         const { user_id } = req.query;
         if (!user_id) {
@@ -50,6 +52,23 @@ exports.getClothingByUser = async (req, res) => {
     } catch (error) {
         console.error("❌ Error fetching clothing items:", error.message);
         res.status(500).json({ error: error.message });
+    }
+};
+
+// Get Clothing Details by ID
+exports.getClothingDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const clothing = await Clothing.findById(id);
+
+        if (!clothing) {
+            return res.status(404).json({ error: "Clothing item not found" });
+        }
+
+        res.json(clothing);
+    } catch (error) {
+        console.error("❌ Error fetching clothing details:", error.message);
+        res.status(500).json({ error: "Failed to retrieve clothing details" });
     }
 };
 
