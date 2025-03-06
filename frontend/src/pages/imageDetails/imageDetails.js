@@ -1,132 +1,93 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "./imageDetails.css";
-import { FaEdit, FaTimes } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa"; // Importing black edit icon
 import HeaderBar from "../../components/header/HeaderBar";
 
 const ImageDetails = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const {
+    image_url,
+    clothing_classification,
+    detected_color,
+    saved_clothing_id,
+  } = location.state;
 
-    const [imageData, setImageData] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [category, setCategory] = useState("");
-    const [color, setColor] = useState("");
-    const [originalCategory, setOriginalCategory] = useState("");
-    const [originalColor, setOriginalColor] = useState("");
-    const [isUpdating, setIsUpdating] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [isChanged, setIsChanged] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [category, setCategory] = useState(clothing_classification);
+  const [color, setColor] = useState(detected_color);
 
-    useEffect(() => {
-        const fetchClothingDetails = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8000/api/clothing/${id}`);
-                const data = response.data;
-                setImageData(data);
-                setCategory(data.clothing_classification || "Unknown Clothing Item");
-                setColor(data.detected_color || "N/A");
-                setOriginalCategory(data.clothing_classification || "Unknown Clothing Item");
-                setOriginalColor(data.detected_color || "N/A");
-                setLoading(false);
-            } catch (error) {
-                console.error("❌ Error fetching clothing details:", error);
-                alert("Error loading clothing details.");
-                navigate("/home");
-            }
-        };
-        fetchClothingDetails();
-    }, [id, navigate]);
-
-    useEffect(() => {
-        const hasChanged = category.trim() !== originalCategory.trim() || color.trim() !== originalColor.trim();
-        setIsChanged(hasChanged);
-    }, [category, color, originalCategory, originalColor]);
-
-    const handleSaveChanges = async () => {
-        if (isUpdating || !isChanged) return;
-        setIsUpdating(true);
-
-        try {
-            const response = await axios.put(`http://localhost:8000/api/clothing/edit-clothing/${id}`, {
-                clothing_classification: category,
-                detected_color: color,
-            });
-
-            console.log("✅ Update Successful:", response.data);
-            setIsEditing(false);
-            setImageData({ ...imageData, clothing_classification: category, detected_color: color });
-            setOriginalCategory(category);
-            setOriginalColor(color);
-            setIsChanged(false);
-        } catch (error) {
-            console.error("❌ Error updating details:", error);
-            alert("Failed to update details. Try again.");
-        } finally {
-            setIsUpdating(false);
+  const handleSave = async () => {
+    try {
+      await axios.put(
+        `http://localhost:8000/api/clothing/${saved_clothing_id}`,
+        {
+          clothing_classification: category,
+          detected_color: color,
         }
-    };
+      );
 
-    const handleGenerateRecommendation = async () => {
-        navigate(`/recommendation/${id}`);
-    };
-
-    const handleCancelEdit = () => {
-        setIsEditing(false);
-        setCategory(originalCategory);
-        setColor(originalColor);
-    };
-
-    if (loading) {
-        return <div className="details-page-container"><p>Loading...</p></div>;
+      setIsEditing(false);
+    } catch (error) {
+      console.error("❌ Error updating clothing details:", error);
     }
+  };
 
-    return (
-        <div className="details-page-container">
-            <HeaderBar />
-            <div className="details-header">
-                <h2 className="details-title">Image Details</h2>
-                {isEditing ? (
-                    <button className="closebutton" onClick={handleCancelEdit}>
-                        <FaTimes />
-                    </button>
-                ) : (
-                    <button className="edit-button" onClick={() => setIsEditing(true)}>
-                        <FaEdit />
-                    </button>
-                )}
-            </div>
+  return (
+    <div className="page-container">
+      <HeaderBar />
 
-            <img src={imageData.image_url} alt="Clothing Item" className="details-image" />
+      {/* Header Section with Edit Icon */}
+      <div className="details-header">
+        <h2 className="details-title">Image Details</h2>
+        {!isEditing && (
+          <button className="edit-button" onClick={() => setIsEditing(true)}>
+            <FaEdit />
+          </button>
+        )}
+      </div>
 
-            {isEditing ? (
-                <div className="details-form">
-                    <label>Category:</label>
-                    <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} />
-                    <label>Detected Color:</label>
-                    <input type="text" value={color} onChange={(e) => setColor(e.target.value)} />
-                    <button className="save-button" onClick={handleSaveChanges} disabled={!isChanged || isUpdating}>
-                        {isUpdating ? "Saving..." : "Save Changes"}
-                    </button>
-                </div>
-            ) : (
-                <div className="details-text">
-                    <div className="details-row">
-                        <span className="details-label">Category:</span>
-                        <span className="details-value">{category}</span>
-                    </div>
-                    <div className="details-row">
-                        <span className="details-label">Detected Color:</span>
-                        <span className="details-value">{color}</span>
-                    </div>
-                    <button className="recommend-button" onClick={handleGenerateRecommendation}>
-                        Generate Recommendations
-                    </button>
-                </div>
-            )}
+      {/* Image Display */}
+      <img src={image_url} alt="Clothing" className="details-image" />
+
+      {/* Editable Form */}
+      {isEditing ? (
+        <div className="details-form">
+          <label>Category:</label>
+          <input
+            type="text"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          />
+
+          <label>Detected Color:</label>
+          <input
+            type="text"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+          />
+
+          <div className="save-button-container">
+            <button className="save-button" onClick={handleSave}>
+              Save Changes
+            </button>
+          </div>
         </div>
-    );
+      ) : (
+        <div className="details-view">
+          <div className="details-row">
+            <span className="details-label">Category:</span>
+            <span className="details-value">{category}</span>
+          </div>
+          <div className="details-row">
+            <span className="details-label">Detected Color:</span>
+            <span className="details-value">{color}</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ImageDetails;

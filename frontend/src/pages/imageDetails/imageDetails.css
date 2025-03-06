@@ -15,6 +15,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 100px;
+  margin-bottom: 20px;
   width: 100%;
   position: relative;
 }
@@ -71,8 +73,12 @@
   width: 80%;
   max-width: 400px;
   margin-top: 20px;
+  background: rgba(187, 187, 187, 0.5);
+  color: black;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 14px;
 }
-
 
 .details-row {
   display: flex;
@@ -84,19 +90,16 @@
   margin-top: 8px;
 }
 
-
 .details-label {
   font-weight: bold;
   text-align: left;
   margin-right: 20px;
 }
 
-
 .details-value {
   text-align: left;
   font-weight: normal;
 }
-
 
 .details-form {
   display: flex;
@@ -106,7 +109,7 @@
   padding: 20px;
 }
 
-.details-form label{
+.details-form label {
   font-weight: bold;
 }
 

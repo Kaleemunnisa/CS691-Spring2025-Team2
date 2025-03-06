@@ -3,13 +3,13 @@ import "./ClothingList.css";
 import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
 import { MdDeleteOutline } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 function ClothingList() {
   const [clothingItems, setClothingItems] = useState([]);
   const [likedItems, setLikedItems] = useState({});
 
-  const [editItemId, setEditItemId] = useState(null);
-  const [editData, setEditData] = useState({});
+  const navigate = useNavigate();
 
   // Fetch clothing items from the server before rendering
   useEffect(() => {
@@ -64,37 +64,16 @@ function ClothingList() {
       .catch((error) => console.error("Error deleting item:", error));
   };
 
-  const startEdit = (item) => {
-    setEditItemId(item._id);
-    setEditData({
-      clothing_classification: item.clothing_classification,
-      detected_color: item.detected_color,
-    });
-  };
-
-  // Update the edited item
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Save the edited item
-  const saveEdit = (id) => {
-    fetch(`/api/clothing/edit-clothing/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
+  // Go to details page for this item
+  const handleEdit = (item) => {
+    navigate(`/details/${item._id}`, {
+      state: {
+        image_url: item.image_url,
+        clothing_classification: item.clothing_classification,
+        detected_color: item.detected_color,
+        saved_clothing_id: item._id,
       },
-      body: JSON.stringify(editData),
-    })
-      .then((response) => response.json())
-      .then((updatedItem) => {
-        setClothingItems((prevItems) =>
-          prevItems.map((item) => (item._id === id ? updatedItem : item))
-        );
-        setEditItemId(null);
-      })
-      .catch((error) => console.error("Error updating item:", error));
+    });
   };
 
   return (
@@ -124,40 +103,11 @@ function ClothingList() {
             </button>
 
             <div className="clothing-info">
-              {editItemId === item._id ? (
-                <>
-                  <input
-                    type="text"
-                    name="clothing_classification"
-                    value={editData.clothing_classification}
-                    onChange={handleEditChange}
-                    className="edit-input"
-                  />
-                  <input
-                    type="text"
-                    name="detected_color"
-                    value={editData.detected_color}
-                    onChange={handleEditChange}
-                    className="edit-input"
-                  />
-                  <button
-                    className="save-button"
-                    onClick={() => saveEdit(item._id)}
-                  >
-                    Save
-                  </button>
-                </>
-              ) : (
-                <>
-                  <p className="clothing-name">
-                    {item.clothing_classification}
-                  </p>
-                  <p className="clothing-class">Color: {item.detected_color}</p>
-                  <button className="edit-icon" onClick={() => startEdit(item)}>
-                    <FaEdit />
-                  </button>
-                </>
-              )}
+              <p className="clothing-name">{item.clothing_classification}</p>
+              <p className="clothing-class">Color: {item.detected_color}</p>
+              <button className="edit-icon" onClick={() => handleEdit(item)}>
+                <FaEdit />
+              </button>
             </div>
           </div>
         ))}
