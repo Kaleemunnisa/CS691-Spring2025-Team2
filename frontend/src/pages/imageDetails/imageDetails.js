@@ -21,7 +21,7 @@ const ImageDetails = () => {
   const handleSave = async () => {
     try {
       await axios.put(
-        `http://localhost:8000/api/clothing/${saved_clothing_id}`,
+        `http://localhost:8000/api/clothing/edit-clothing/${saved_clothing_id}`,
         {
           clothing_classification: category,
           detected_color: color,
