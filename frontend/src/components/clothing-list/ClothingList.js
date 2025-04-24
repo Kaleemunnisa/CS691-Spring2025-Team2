@@ -8,35 +8,71 @@ import { useNavigate } from "react-router-dom";
 function ClothingList() {
   const [clothingItems, setClothingItems] = useState([]);
   const [likedItems, setLikedItems] = useState({});
-  const [showFavorites, setShowFavorites] = useState(false);
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+
+  const USER_ID = "user123"; // temporary user ID hardcoded for testing
 
   const navigate = useNavigate();
 
-  // Fetch clothing items from the server before rendering
   useEffect(() => {
-    fetch("/api/clothing/get-clothing?user_id=user123")
-      .then((response) => response.json())
-      .then((data) => {
-        setClothingItems(data);
+    const fetchClothingAndFavorites = async () => {
+      try {
+        const [clothingRes, favoritesRes] = await Promise.all([
+          fetch(`/api/clothing/get-clothing?user_id=${USER_ID}`),
+          fetch(`/api/fav/get-favorites?user_id=${USER_ID}`),
+        ]);
 
-        const initialLikedState = {};
-        data.forEach((item) => {
-          initialLikedState[item._id] = false;
+        const clothingData = await clothingRes.json();
+        const favorites = await favoritesRes.json();
+
+        const likedMap = {};
+        clothingData.forEach((item) => {
+          likedMap[item._id] = favorites.includes(item._id);
         });
-        setLikedItems(initialLikedState);
-      })
-      .catch((error) => console.error("Error fetching clothing:", error));
+
+        setClothingItems(clothingData);
+        setLikedItems(likedMap);
+      } catch (error) {
+        console.error("Error fetching clothing or favorites:", error);
+      }
+    };
+
+    fetchClothingAndFavorites();
   }, []);
 
-  // Toggle like status
-  const toggleLike = (id) => {
-    setLikedItems((prevState) => ({
-      ...prevState,
-      [id]: !prevState[id],
+  const toggleLike = async (id) => {
+    const isLiked = likedItems[id];
+
+    setLikedItems((prev) => ({
+      ...prev,
+      [id]: !isLiked,
     }));
+
+    // check if the item is already liked and if so, remove it
+    const endpoint = isLiked
+      ? "/api/fav/remove-favorite"
+      : "/api/fav/add-favorite";
+
+    try {
+      // Send the request to add or remove the favorite based on the current state of the variable isLiked
+      // If isLiked is true, we want to remove the favorite, otherwise we want to add it
+      const res = await fetch(endpoint, {
+        method: isLiked ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: USER_ID, clothing_id: id }),
+      });
+
+      const updatedFavorites = await res.json();
+      const newLikedState = {};
+      updatedFavorites.forEach((cid) => {
+        newLikedState[cid] = true;
+      });
+      setLikedItems(newLikedState);
+    } catch (err) {
+      console.error("Failed to toggle favorite:", err);
+    }
   };
 
-  // Confirm before deleting the item
   const confirmDelete = (id) => {
     const item = clothingItems.find((item) => item._id === id);
     if (
@@ -48,7 +84,6 @@ function ClothingList() {
     }
   };
 
-  // Delete the item
   const deleteItem = (id) => {
     fetch(`/api/clothing/delete-clothing/${id}`, {
       method: "DELETE",
@@ -58,6 +93,11 @@ function ClothingList() {
           setClothingItems((prevItems) =>
             prevItems.filter((item) => item._id !== id)
           );
+          setLikedItems((prev) => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+          });
         } else {
           console.error("Failed to delete item");
         }
@@ -65,7 +105,6 @@ function ClothingList() {
       .catch((error) => console.error("Error deleting item:", error));
   };
 
-  // Go to details page for this item
   const handleEdit = (item) => {
     navigate(`/details/${item._id}`, {
       state: {
@@ -77,19 +116,23 @@ function ClothingList() {
     });
   };
 
+  const visibleItems = showOnlyFavorites
+    ? clothingItems.filter((item) => likedItems[item._id])
+    : clothingItems;
+
   return (
     <div className="wardrobe-container">
       <h1 className="wardrobe-heading">My Wardrobe</h1>
 
       <button
         className="toggle-favorites-btn"
-        onClick={() => setShowFavorites((prev) => !prev)}
+        onClick={() => setShowOnlyFavorites((prev) => !prev)}
       >
-        {showFavorites ? "Show All Items" : "Show Favorites"}
+        {showOnlyFavorites ? "Show All" : "Show Favorites"}
       </button>
 
       <div className="wardrobe-grid">
-        {clothingItems.map((item) => (
+        {visibleItems.map((item) => (
           <div key={item._id} className="wardrobe-item">
             <button
               className="delete-icon"
@@ -103,6 +146,7 @@ function ClothingList() {
               alt={item.clothing_classification}
               className="clothing-image"
             />
+
             <button className="heart-icon" onClick={() => toggleLike(item._id)}>
               {likedItems[item._id] ? (
                 <IoMdHeart color="red" />

@@ -20,13 +20,13 @@ const App = () => {
           <Route path="/" element={<FirstIntroPage />} />
           <Route path="/secondIntro" element={<SecondIntroPage />} />
           <Route path="/thirdIntro" element={<ThirdIntroPage />} />
-        <Route path="/home" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/details/:id" element={<ImageDetails />} />
           <Route path="/wardrobe" element={<Wardrobe />} />
-        <Route path="/recommendation/:id" element={<RecommendationPage />} />
+          <Route path="/recommendation/:id" element={<RecommendationPage />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
       </Router>
