@@ -34,42 +34,43 @@ const RecommendationPage = () => {
         <div className="recommendation-container">
             <HeaderBar />
             <div className="recommendation-content">
-                <h2>Outfit Recommendation</h2>
+                <h2 className="rec-title">Outfit Recommendation</h2>
 
                 {error && <p>{error}</p>}
                 {!error && !data && <p>Fetching recommendation...</p>}
 
                 {data && (
                     <>
-                        <h3>Temperature: {data.temperature}°C</h3>
-
-                        <div className="base-item">
-                            <h4>Your Uploaded Item</h4>
-                            <img src={data.base_item.image} alt="Base item" className="item-image" />
-                            <p><strong>{data.base_item.type}</strong> — {data.base_item.color}</p>
+                        <div className="temperature-badge">
+                            🌡️ {data.temperature.toFixed(1)}°C
                         </div>
 
-                        <div className="rec-section">
-                            <h4>Recommended from Your Wardrobe:</h4>
-                            {data.recommendations.length > 0 ? (
-                                data.recommendations.map((item, index) => (
-                                    <div key={index} className="item-card">
-                                        <img src={item.image_url} alt={item.clothing_classification} className="item-image" />
-                                        <p>{item.clothing_classification} — {item.detected_color}</p>
-                                    </div>
-                                ))
-                            ) : (
-                                <p>No matching items found in wardrobe.</p>
-                            )}
-                        </div>
+                        <div className="card-grid">
+                            {/* Base Item */}
+                            <div className="item-card">
+                                <div className="section-label">Your Upload</div>
+                                <img src={data.base_item.image} alt="Base item" />
+                                <div className="item-title">{data.base_item.type}</div>
+                                <div className="item-color">{data.base_item.color}</div>
+                            </div>
 
-                        <div className="rec-section">
-                            <h4>Suggestions to Complete the Look:</h4>
+                            {/* Recommended Items */}
+                            {data.recommendations.map((item, index) => (
+                                <div key={index} className="item-card">
+                                    <div className="section-label">Recommended </div>
+                                    <img src={item.image_url} alt={item.clothing_classification} />
+                                    <div className="item-title">{item.clothing_classification}</div>
+                                    <div className="item-color">{item.detected_color}</div>
+                                </div>
+                            ))}
+
+                            {/* Suggested Add-ons */}
                             {data.missing.map((item, index) => (
-                                <div key={index} className="missing-block">
-                                    <p><strong>{item.type.toUpperCase()}</strong></p>
-                                    <p>Options: {item.options.join(", ")}</p>
-                                    <p>Matching Colors: {item.acceptableColors.join(", ")}</p>
+                                <div key={index} className="item-card">
+                                    <div className="section-label">Suggested Add-on</div>
+                                    <img src={`/fallbacks/black_${item.options[0].toLowerCase()}.png`} alt="addon" />
+                                    <div className="item-title">{item.options[0]}</div>
+                                    <div className="item-color">● fallback</div>
                                 </div>
                             ))}
                         </div>
