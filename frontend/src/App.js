@@ -11,6 +11,7 @@ import Wardrobe from "./pages/wardrobe/Wardrobe";
 import HomePage from "./pages/landingpage/homePage";
 import RecommendationPage from "./pages/recommendationPage/recommendation";
 import Profile from "./pages/Profile";
+import AboutUs from './pages/landingpage/AboutUs';
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/wardrobe" element={<Wardrobe />} />
         <Route path="/recommendation/:id" element={<RecommendationPage />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/about" element={<AboutUs />} />
         </Routes>
       </Router>
     </AuthProvider>
