@@ -10,8 +10,7 @@ function ClothingList() {
   const [likedItems, setLikedItems] = useState({});
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
-  const USER_ID = "user123"; // temporary user ID hardcoded for testing
-
+  const USER_ID = "user123";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,14 +47,11 @@ function ClothingList() {
       [id]: !isLiked,
     }));
 
-    // check if the item is already liked and if so, remove it
     const endpoint = isLiked
       ? "/api/fav/remove-favorite"
       : "/api/fav/add-favorite";
 
     try {
-      // Send the request to add or remove the favorite based on the current state of the variable isLiked
-      // If isLiked is true, we want to remove the favorite, otherwise we want to add it
       const res = await fetch(endpoint, {
         method: isLiked ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
@@ -120,6 +116,13 @@ function ClothingList() {
     ? clothingItems.filter((item) => likedItems[item._id])
     : clothingItems;
 
+  const groupedItems = visibleItems.reduce((acc, item) => {
+    const key = item.clothing_classification;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+
   return (
     <div className="wardrobe-container">
       <h1 className="wardrobe-heading">My Wardrobe</h1>
@@ -131,40 +134,53 @@ function ClothingList() {
         {showOnlyFavorites ? "Show All" : "Show Favorites"}
       </button>
 
-      <div className="wardrobe-grid">
-        {visibleItems.map((item) => (
-          <div key={item._id} className="wardrobe-item">
-            <button
-              className="delete-icon"
-              onClick={() => confirmDelete(item._id)}
-            >
-              <MdDeleteOutline />
-            </button>
+      {Object.entries(groupedItems).map(([classification, items]) => (
+        <div key={classification} className="classification-group">
+          <h2 className="classification-heading">{classification}</h2>
+          <div className="wardrobe-grid">
+            {items.map((item) => (
+              <div key={item._id} className="wardrobe-item">
+                <button
+                  className="delete-icon"
+                  onClick={() => confirmDelete(item._id)}
+                >
+                  <MdDeleteOutline />
+                </button>
 
-            <img
-              src={item.image_url}
-              alt={item.clothing_classification}
-              className="clothing-image"
-            />
+                <img
+                  src={item.image_url}
+                  alt={item.clothing_classification}
+                  className="clothing-image"
+                />
 
-            <button className="heart-icon" onClick={() => toggleLike(item._id)}>
-              {likedItems[item._id] ? (
-                <IoMdHeart color="red" />
-              ) : (
-                <IoMdHeartEmpty />
-              )}
-            </button>
+                <button
+                  className="heart-icon"
+                  onClick={() => toggleLike(item._id)}
+                >
+                  {likedItems[item._id] ? (
+                    <IoMdHeart color="red" />
+                  ) : (
+                    <IoMdHeartEmpty />
+                  )}
+                </button>
 
-            <div className="clothing-info">
-              <p className="clothing-name">{item.clothing_classification}</p>
-              <p className="clothing-class">Color: {item.detected_color}</p>
-              <button className="edit-icon" onClick={() => handleEdit(item)}>
-                <FaEdit />
-              </button>
-            </div>
+                <div className="clothing-info">
+                  <p className="clothing-name">
+                    {item.clothing_classification}
+                  </p>
+                  <p className="clothing-class">Color: {item.detected_color}</p>
+                  <button
+                    className="edit-icon"
+                    onClick={() => handleEdit(item)}
+                  >
+                    <FaEdit />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }
