@@ -6,6 +6,11 @@ const ClothingSchema = new mongoose.Schema({
     user_id: { type: String, required: true },
     clothing_classification: { type: String, required: true },
     detected_color: { type: String, required: true },
+    status: {
+        type: String,
+        enum: ['classified', 'pending'],
+        default: 'classified'
+    },
     timestamp: { type: Date, default: Date.now }
 });
 

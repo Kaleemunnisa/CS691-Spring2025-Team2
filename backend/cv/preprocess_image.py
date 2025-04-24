@@ -41,7 +41,7 @@ def is_object_centered_and_big(img, center_tol=0.4, min_ratio=0.08):
     return centered and size_ok
 
 def is_likely_clothing(img):
-    if calculate_edge_density(img) < 0.003:
+    if calculate_edge_density(img) < 0.001:
         return False
     if not has_single_dominant_contour(img):
         return False

@@ -25,9 +25,9 @@ const ImageDetails = () => {
                 const response = await axios.get(`http://localhost:8000/api/clothing/${id}`);
                 const data = response.data;
                 setImageData(data);
-                setCategory(data.clothing_classification || "Unknown Clothing Item");
+                setCategory(data.clothing_classification || "unknown");
                 setColor(data.detected_color || "N/A");
-                setOriginalCategory(data.clothing_classification || "Unknown Clothing Item");
+                setOriginalCategory(data.clothing_classification || "unknown");
                 setOriginalColor(data.detected_color || "N/A");
                 setLoading(false);
             } catch (error) {
@@ -103,12 +103,18 @@ const ImageDetails = () => {
             {isEditing ? (
                 <div className="details-form">
                     <label>Category:</label>
-                    <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} />
+                    <select value={category} onChange={(e) => setCategory(e.target.value)} required>
+                        <option value="unknown">Select Category</option>
+                        {["Shirt", "Tshirt", "Pant", "Jeans", "Jacket", "Coat"].map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                    </select>
                     <label>Detected Color:</label>
                     <input type="text" value={color} onChange={(e) => setColor(e.target.value)} />
                     <button className="save-button" onClick={handleSaveChanges} disabled={!isChanged || isUpdating}>
                         {isUpdating ? "Saving..." : "Save Changes"}
                     </button>
+
                 </div>
             ) : (
                 <div className="details-text">
@@ -120,9 +126,22 @@ const ImageDetails = () => {
                         <span className="details-label">Detected Color:</span>
                         <span className="details-value">{color}</span>
                     </div>
-                    <button className="recommend-button" onClick={handleGenerateRecommendation}>
+                    <button
+                        className={`recommend-button ${category === "unknown" ? "disabled" : ""}`}
+                        onClick={handleGenerateRecommendation}
+                        disabled={category === "unknown"}
+                    >
                         Generate Recommendations
                     </button>
+
+                    {category === "unknown" && (
+                        <p className="warning-text">
+                            ⚠️ Please select a valid category to enable recommendations.
+                        </p>
+                    )}
+
+
+
                 </div>
             )}
         </div>

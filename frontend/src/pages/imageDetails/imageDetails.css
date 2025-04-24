@@ -127,6 +127,22 @@
   border-color: rgba(134, 209, 234, 1);
   background-color: white;
 }
+
+.details-form select {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  background-color: #f9f9f9;
+}
+
+.details-form select:focus {
+  border-color: rgba(134, 209, 234, 1);
+  background-color: white;
+}
+
 .save-button-container {
   display: flex;
   width: 100%;
@@ -170,3 +186,18 @@
 .recommend-button:hover {
   background-color: rgba(115, 180, 202, 1);
 }
+
+.recommend-button:disabled,
+.recommend-button.disabled {
+  background-color: #ccc !important;
+  cursor: not-allowed;
+  color: #555;
+}
+
+.warning-text {
+  font-size: 14px;
+  color: #c0392b;
+  text-align: center;
+  margin-top: 8px;
+}
+

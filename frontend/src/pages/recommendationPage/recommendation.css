@@ -30,3 +30,28 @@
     color: #333;
     line-height: 1.5;
 }
+.base-item, .rec-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.item-image {
+    width: 120px;
+    height: auto;
+    border-radius: 8px;
+    margin: 10px 0;
+    object-fit: contain;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.item-card {
+    margin: 10px auto;
+}
+
+.missing-block {
+    background-color: #f8f8f8;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px auto;
+    width: 90%;
+}
