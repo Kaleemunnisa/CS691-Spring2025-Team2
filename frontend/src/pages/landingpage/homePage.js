@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocation as useGlobalLocation } from "../../context/LocationContext";
 import "./homePage.css";
 import HeaderBar from "../../components/header/HeaderBar";
 import weatherIcon from "../../assets/images/weather-icon.png";
@@ -8,7 +9,8 @@ import { FaSearchLocation } from "react-icons/fa";
 
 const HomePage = () => {
   const [weather, setWeather] = useState(null);
-  const [location, setLocation] = useState({ city: "", state: "" });
+  const [localCity, setLocalCity] = useState("Loading...");
+  const { locationData, setLocationData } = useGlobalLocation();
   const [showSearch, setShowSearch] = useState(false);
   const navigate = useNavigate();
 
@@ -20,53 +22,54 @@ const HomePage = () => {
 
           fetch(`http://localhost:8000/api/weather/fetch-weather?lat=${latitude}&lon=${longitude}`)
             .then((res) => res.json())
-            .then((data) => setWeather(data))
-            .catch((err) => console.error("Error fetching weather:", err));
+            .then((data) => {
+              setWeather(data);
+              setLocationData({
+                lat: latitude,
+                lon: longitude,
+                temperature: parseFloat(data.temperature),
+                city: "Auto-detected",
+                state: ""
+              });
+              setLocalCity("Auto-detected");
+            });
 
           fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
             .then((res) => res.json())
             .then((data) => {
-              if (data.address) {
-                setLocation({
-                  city: data.address.city || data.address.town || data.address.village || "Unknown City",
-                  state: data.address.state || "Unknown State",
-                });
-              }
-            })
-            .catch((err) => console.error("Error fetching location:", err));
+              const cityName = data.address.city || data.address.town || data.address.village || "Auto-detected";
+              setLocalCity(cityName);
+              setLocationData((prev) => ({ ...prev, city: cityName }));
+            });
         },
-        (error) => console.error("Geolocation error:", error)
+        (err) => console.error("Geolocation error:", err)
       );
     }
   }, []);
 
   const handlePlaceSelected = (place) => {
-    console.log("Selected Place:", place);
-
-    if (!place.geometry || !place.geometry.location) {
-      alert("Please select a valid place from the list.");
-      return;
-    }
+    if (!place.geometry || !place.geometry.location) return;
 
     const lat = place.geometry.location.lat();
     const lon = place.geometry.location.lng();
-    console.log("Coordinates:", lat, lon);
+    const formattedName =
+      place.formatted_address || place.name || "Selected City";
 
     fetch(`http://localhost:8000/api/weather/fetch-weather?lat=${lat}&lon=${lon}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("Weather API response:", data);
         setWeather(data);
+        setLocationData({
+          lat,
+          lon,
+          temperature: parseFloat(data.temperature),
+          city: formattedName,
+          state: ""
+        });
+        setLocalCity(formattedName);
       })
       .catch((err) => console.error("Weather fetch error:", err));
 
-    const formattedName =
-      place.formatted_address ||
-      place.name ||
-      (place.address_components && place.address_components[0].long_name) ||
-      "Selected City";
-
-    setLocation({ city: formattedName, state: "" });
     setShowSearch(false);
   };
 
@@ -76,7 +79,7 @@ const HomePage = () => {
       <div className="home-container">
         <div className="weather-info">
           <div className="location-bar">
-            <h1>{location.city ? location.city : "Loading..."}</h1>
+            <h1>{localCity}</h1>
             <FaSearchLocation className="search-icon" onClick={() => setShowSearch(!showSearch)} />
           </div>
 

@@ -4,15 +4,20 @@ import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
 import { MdDeleteOutline } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "../../context/LocationContext";
 
-function ClothingList() {
+
+
+function ClothingList({ weatherData }) {
   const [clothingItems, setClothingItems] = useState([]);
   const [likedItems, setLikedItems] = useState({});
-
+  const { locationData } = useLocation();
   const navigate = useNavigate();
+  console.log("✅ Weather passed to ClothingList:", weatherData);
 
-  // Fetch clothing items from the server before rendering
+
   useEffect(() => {
+    console.log("🧥 ClothingList loaded with weatherData:", weatherData);
     fetch("/api/clothing/get-clothing?user_id=user123")
       .then((response) => response.json())
       .then((data) => {
@@ -27,7 +32,6 @@ function ClothingList() {
       .catch((error) => console.error("Error fetching clothing:", error));
   }, []);
 
-  // Toggle like status
   const toggleLike = (id) => {
     setLikedItems((prevState) => ({
       ...prevState,
@@ -35,7 +39,6 @@ function ClothingList() {
     }));
   };
 
-  // Confirm before deleting the item
   const confirmDelete = (id) => {
     const item = clothingItems.find((item) => item._id === id);
     if (
@@ -47,7 +50,6 @@ function ClothingList() {
     }
   };
 
-  // Delete the item
   const deleteItem = (id) => {
     fetch(`/api/clothing/delete-clothing/${id}`, {
       method: "DELETE",
@@ -64,7 +66,6 @@ function ClothingList() {
       .catch((error) => console.error("Error deleting item:", error));
   };
 
-  // Go to details page for this item
   const handleEdit = (item) => {
     navigate(`/details/${item._id}`, {
       state: {
@@ -72,7 +73,16 @@ function ClothingList() {
         clothing_classification: item.clothing_classification,
         detected_color: item.detected_color,
         saved_clothing_id: item._id,
+        ...weatherData // pass temperature, lat, lon to detail page if needed
       },
+    });
+  };
+
+  const handleRecommend = (item) => {
+    console.log(`🧭 Navigating to /recommend/${item._id} with weather:`, weatherData);
+    
+    navigate(`/recommend/${item._id}`, {
+      state: weatherData // pass weather state to recommendation page
     });
   };
 
@@ -93,7 +103,9 @@ function ClothingList() {
               src={item.image_url}
               alt={item.clothing_classification}
               className="clothing-image"
+              onClick={() => handleRecommend(item)} // allow clicking image to view recommendation
             />
+
             <button className="heart-icon" onClick={() => toggleLike(item._id)}>
               {likedItems[item._id] ? (
                 <IoMdHeart color="red" />
