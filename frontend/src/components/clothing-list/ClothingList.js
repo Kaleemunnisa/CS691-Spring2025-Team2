@@ -8,35 +8,67 @@ import { useNavigate } from "react-router-dom";
 function ClothingList() {
   const [clothingItems, setClothingItems] = useState([]);
   const [likedItems, setLikedItems] = useState({});
-  const [showFavorites, setShowFavorites] = useState(false);
-
+  const USER_ID = "user123";
   const navigate = useNavigate();
 
-  // Fetch clothing items from the server before rendering
+  // Fetch clothing and favorites on page load
   useEffect(() => {
-    fetch("/api/clothing/get-clothing?user_id=user123")
-      .then((response) => response.json())
-      .then((data) => {
-        setClothingItems(data);
+    const fetchClothingAndFavorites = async () => {
+      try {
+        const [clothingRes, favoritesRes] = await Promise.all([
+          fetch(`/api/clothing/get-clothing?user_id=${USER_ID}`),
+          fetch(`/api/fav/get-favorites?user_id=${USER_ID}`),
+        ]);
 
-        const initialLikedState = {};
-        data.forEach((item) => {
-          initialLikedState[item._id] = false;
+        const clothingData = await clothingRes.json();
+        const favorites = await favoritesRes.json(); // Array of _ids
+
+        // Build liked state
+        const likedMap = {};
+        clothingData.forEach((item) => {
+          likedMap[item._id] = favorites.includes(item._id);
         });
-        setLikedItems(initialLikedState);
-      })
-      .catch((error) => console.error("Error fetching clothing:", error));
+
+        setClothingItems(clothingData);
+        setLikedItems(likedMap);
+      } catch (error) {
+        console.error("Error fetching clothing or favorites:", error);
+      }
+    };
+
+    fetchClothingAndFavorites();
   }, []);
 
-  // Toggle like status
-  const toggleLike = (id) => {
-    setLikedItems((prevState) => ({
-      ...prevState,
-      [id]: !prevState[id],
+  const toggleLike = async (id) => {
+    const isLiked = likedItems[id];
+
+    setLikedItems((prev) => ({
+      ...prev,
+      [id]: !isLiked,
     }));
+
+    const endpoint = isLiked
+      ? "/api/fav/remove-favorite"
+      : "/api/fav/add-favorite";
+
+    try {
+      const res = await fetch(endpoint, {
+        method: isLiked ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: USER_ID, clothing_id: id }),
+      });
+
+      const updatedFavorites = await res.json();
+      const newLikedState = {};
+      updatedFavorites.forEach((cid) => {
+        newLikedState[cid] = true;
+      });
+      setLikedItems(newLikedState);
+    } catch (err) {
+      console.error("Failed to toggle favorite:", err);
+    }
   };
 
-  // Confirm before deleting the item
   const confirmDelete = (id) => {
     const item = clothingItems.find((item) => item._id === id);
     if (
@@ -48,7 +80,6 @@ function ClothingList() {
     }
   };
 
-  // Delete the item
   const deleteItem = (id) => {
     fetch(`/api/clothing/delete-clothing/${id}`, {
       method: "DELETE",
@@ -58,6 +89,11 @@ function ClothingList() {
           setClothingItems((prevItems) =>
             prevItems.filter((item) => item._id !== id)
           );
+          setLikedItems((prev) => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+          });
         } else {
           console.error("Failed to delete item");
         }
@@ -65,7 +101,6 @@ function ClothingList() {
       .catch((error) => console.error("Error deleting item:", error));
   };
 
-  // Go to details page for this item
   const handleEdit = (item) => {
     navigate(`/details/${item._id}`, {
       state: {
