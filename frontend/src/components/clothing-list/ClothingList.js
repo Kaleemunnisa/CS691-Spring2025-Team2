@@ -8,10 +8,12 @@ import { useNavigate } from "react-router-dom";
 function ClothingList() {
   const [clothingItems, setClothingItems] = useState([]);
   const [likedItems, setLikedItems] = useState({});
-  const USER_ID = "user123";
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+
+  const USER_ID = "user123"; // temporary user ID hardcoded for testing
+
   const navigate = useNavigate();
 
-  // Fetch clothing and favorites on page load
   useEffect(() => {
     const fetchClothingAndFavorites = async () => {
       try {
@@ -21,9 +23,8 @@ function ClothingList() {
         ]);
 
         const clothingData = await clothingRes.json();
-        const favorites = await favoritesRes.json(); // Array of _ids
+        const favorites = await favoritesRes.json();
 
-        // Build liked state
         const likedMap = {};
         clothingData.forEach((item) => {
           likedMap[item._id] = favorites.includes(item._id);
@@ -47,11 +48,14 @@ function ClothingList() {
       [id]: !isLiked,
     }));
 
+    // check if the item is already liked and if so, remove it
     const endpoint = isLiked
       ? "/api/fav/remove-favorite"
       : "/api/fav/add-favorite";
 
     try {
+      // Send the request to add or remove the favorite based on the current state of the variable isLiked
+      // If isLiked is true, we want to remove the favorite, otherwise we want to add it
       const res = await fetch(endpoint, {
         method: isLiked ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
@@ -112,19 +116,23 @@ function ClothingList() {
     });
   };
 
+  const visibleItems = showOnlyFavorites
+    ? clothingItems.filter((item) => likedItems[item._id])
+    : clothingItems;
+
   return (
     <div className="wardrobe-container">
       <h1 className="wardrobe-heading">My Wardrobe</h1>
 
       <button
         className="toggle-favorites-btn"
-        onClick={() => navigate("/favorites")}
+        onClick={() => setShowOnlyFavorites((prev) => !prev)}
       >
-        Show Favorites
+        {showOnlyFavorites ? "Show All" : "Show Favorites"}
       </button>
 
       <div className="wardrobe-grid">
-        {clothingItems.map((item) => (
+        {visibleItems.map((item) => (
           <div key={item._id} className="wardrobe-item">
             <button
               className="delete-icon"
@@ -138,6 +146,7 @@ function ClothingList() {
               alt={item.clothing_classification}
               className="clothing-image"
             />
+
             <button className="heart-icon" onClick={() => toggleLike(item._id)}>
               {likedItems[item._id] ? (
                 <IoMdHeart color="red" />
