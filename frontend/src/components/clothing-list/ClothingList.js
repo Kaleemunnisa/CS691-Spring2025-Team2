@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 function ClothingList() {
   const [clothingItems, setClothingItems] = useState([]);
   const [likedItems, setLikedItems] = useState({});
+  const [showFavorites, setShowFavorites] = useState(false);
 
   const navigate = useNavigate();
 
@@ -79,6 +80,14 @@ function ClothingList() {
   return (
     <div className="wardrobe-container">
       <h1 className="wardrobe-heading">My Wardrobe</h1>
+
+      <button
+        className="toggle-favorites-btn"
+        onClick={() => setShowFavorites((prev) => !prev)}
+      >
+        {showFavorites ? "Show All Items" : "Show Favorites"}
+      </button>
+
       <div className="wardrobe-grid">
         {clothingItems.map((item) => (
           <div key={item._id} className="wardrobe-item">

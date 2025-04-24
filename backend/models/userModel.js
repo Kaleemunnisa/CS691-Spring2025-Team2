@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema(
+  {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -10,6 +11,10 @@ const UserSchema = new mongoose.Schema({
     weight: { type: Number },
     skinTone: { type: String, enum: ["Fair", "Medium", "Dark"] }, // Standardized values
     profileImage: { type: String }, // Store profile image URL from S3
-}, { timestamps: true });
+    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Clothing" }],
+    User_ID: { type: String, required: true, unique: true },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);
