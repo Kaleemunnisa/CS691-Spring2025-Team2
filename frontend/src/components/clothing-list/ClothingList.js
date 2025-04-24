@@ -83,9 +83,9 @@ function ClothingList() {
 
       <button
         className="toggle-favorites-btn"
-        onClick={() => setShowFavorites((prev) => !prev)}
+        onClick={() => navigate("/favorites")}
       >
-        {showFavorites ? "Show All Items" : "Show Favorites"}
+        Show Favorites
       </button>
 
       <div className="wardrobe-grid">
