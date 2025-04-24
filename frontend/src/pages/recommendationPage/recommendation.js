@@ -6,16 +6,24 @@ import "./recommendation.css";
 
 const RecommendationPage = () => {
     const { id } = useParams();
-    const [recommendation, setRecommendation] = useState("Fetching recommendation...");
+    const [data, setData] = useState(null);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         const fetchRecommendation = async () => {
             try {
-                const response = await axios.post("http://localhost:8000/api/full-recommendation", { clothing_id: id });
-                setRecommendation(response.data.message);
-            } catch (error) {
-                console.error("❌ Error fetching recommendation:", error);
-                setRecommendation("Failed to fetch recommendation.");
+                const response = await axios.get(`http://localhost:8000/api/recommendation`, {
+                    params: {
+                        userId: "user123",
+                        clothingId: id,
+                        lat: 40.71,
+                        lon: -74.01
+                    }
+                });
+                setData(response.data);
+            } catch (err) {
+                console.error("❌ Error fetching recommendation:", err);
+                setError("Failed to fetch recommendation.");
             }
         };
 
@@ -26,8 +34,48 @@ const RecommendationPage = () => {
         <div className="recommendation-container">
             <HeaderBar />
             <div className="recommendation-content">
-                <h2>Recommendation</h2>
-                <p>{recommendation}</p>
+                <h2 className="rec-title">Outfit Recommendation</h2>
+
+                {error && <p>{error}</p>}
+                {!error && !data && <p>Fetching recommendation...</p>}
+
+                {data && (
+                    <>
+                        <div className="temperature-badge">
+                            🌡️ {data.temperature.toFixed(1)}°C
+                        </div>
+
+                        <div className="card-grid">
+                            {/* Base Item */}
+                            <div className="item-card">
+                                <div className="section-label">Your Upload</div>
+                                <img src={data.base_item.image} alt="Base item" />
+                                <div className="item-title">{data.base_item.type}</div>
+                                <div className="item-color">{data.base_item.color}</div>
+                            </div>
+
+                            {/* Recommended Items */}
+                            {data.recommendations.map((item, index) => (
+                                <div key={index} className="item-card">
+                                    <div className="section-label">Recommended </div>
+                                    <img src={item.image_url} alt={item.clothing_classification} />
+                                    <div className="item-title">{item.clothing_classification}</div>
+                                    <div className="item-color">{item.detected_color}</div>
+                                </div>
+                            ))}
+
+                            {/* Suggested Add-ons */}
+                            {data.missing.map((item, index) => (
+                                <div key={index} className="item-card">
+                                    <div className="section-label">Suggested Add-on</div>
+                                    <img src={`/fallbacks/black_${item.options[0].toLowerCase()}.png`} alt="addon" />
+                                    <div className="item-title">{item.options[0]}</div>
+                                    <div className="item-color">● fallback</div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

@@ -20,4 +20,4 @@ async function fetchRealTimeWeather(lat, lon) {
     }
 }
 
-module.exports = { fetchRealTimeWeather };
+module.exports =  fetchRealTimeWeather ;
