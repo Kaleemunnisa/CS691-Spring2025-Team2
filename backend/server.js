@@ -33,12 +33,14 @@ const aiRoutes = require("./routes/aiRoutes");
 const clothingRoutes = require("./routes/clothingRoutes");
 const weatherRoutes = require("./routes/weatherRoutes");
 const uploadRoutes = require('./routes/uploadRoutes');
+const recommendationRoutes = require("./routes/recommendationRoutes");
 
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/clothing", clothingRoutes);
 app.use("/api/weather", weatherRoutes);
+app.use("/api", recommendationRoutes);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

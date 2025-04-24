@@ -1,6 +1,7 @@
 const { classifyClothing, detectPrimaryColor } = require("../services/visionService");
 const Clothing = require("../models/clothingModel");
 
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 exports.classifyClothingItem = async (req, res) => {
     try {
         const { image_id, image_url, user_id } = req.body;
@@ -9,11 +10,12 @@ exports.classifyClothingItem = async (req, res) => {
         }
 
         console.log("🟢 Step 1: Identifying clothing...");
-        const clothing = await classifyClothing(image_url);
+        let clothingRaw = await classifyClothing(image_url);
+        const clothing = capitalize(clothingRaw);  // Normalize
 
         console.log("🟢 Step 2: Detecting primary color...");
         let detectedColor = await detectPrimaryColor(image_url);
-        detectedColor = detectedColor.toLowerCase();
+        detectedColor = detectedColor.toLowerCase();  // Normalize
 
         // Store the classification result in database
         const newClothing = new Clothing({
@@ -21,8 +23,7 @@ exports.classifyClothingItem = async (req, res) => {
             image_url,
             user_id,
             clothing_classification: clothing,
-            detected_color: detectedColor,
-            image_id: req.body.image_id
+            detected_color: detectedColor
         });
 
         await newClothing.save();
@@ -75,7 +76,10 @@ exports.getClothingDetails = async (req, res) => {
 exports.editClothing = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedData = req.body;
+        const updatedData = {
+            ...req.body,
+            status: "classified"
+          };
 
         const updatedClothing = await Clothing.findByIdAndUpdate(id, updatedData, { new: true });
 
