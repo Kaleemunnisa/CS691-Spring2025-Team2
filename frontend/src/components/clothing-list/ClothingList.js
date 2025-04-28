@@ -11,32 +11,69 @@ import { useLocation } from "../../context/LocationContext";
 function ClothingList({ weatherData }) {
   const [clothingItems, setClothingItems] = useState([]);
   const [likedItems, setLikedItems] = useState({});
-  const { locationData } = useLocation();
+  const { locationData } = useLocation();  
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+
+  const USER_ID = "user123";
   const navigate = useNavigate();
   console.log("✅ Weather passed to ClothingList:", weatherData);
 
 
   useEffect(() => {
     console.log("🧥 ClothingList loaded with weatherData:", weatherData);
-    fetch("/api/clothing/get-clothing?user_id=user123")
-      .then((response) => response.json())
-      .then((data) => {
-        setClothingItems(data);
+    const fetchClothingAndFavorites = async () => {
+      try {
+        const [clothingRes, favoritesRes] = await Promise.all([
+          fetch(`/api/clothing/get-clothing?user_id=${USER_ID}`),
+          fetch(`/api/fav/get-favorites?user_id=${USER_ID}`),
+        ]);
 
-        const initialLikedState = {};
-        data.forEach((item) => {
-          initialLikedState[item._id] = false;
+        const clothingData = await clothingRes.json();
+        const favorites = await favoritesRes.json();
+
+        const likedMap = {};
+        clothingData.forEach((item) => {
+          likedMap[item._id] = favorites.includes(item._id);
         });
-        setLikedItems(initialLikedState);
-      })
-      .catch((error) => console.error("Error fetching clothing:", error));
+
+        setClothingItems(clothingData);
+        setLikedItems(likedMap);
+      } catch (error) {
+        console.error("Error fetching clothing or favorites:", error);
+      }
+    };
+
+    fetchClothingAndFavorites();
   }, []);
 
-  const toggleLike = (id) => {
-    setLikedItems((prevState) => ({
-      ...prevState,
-      [id]: !prevState[id],
+  const toggleLike = async (id) => {
+    const isLiked = likedItems[id];
+
+    setLikedItems((prev) => ({
+      ...prev,
+      [id]: !isLiked,
     }));
+
+    const endpoint = isLiked
+      ? "/api/fav/remove-favorite"
+      : "/api/fav/add-favorite";
+
+    try {
+      const res = await fetch(endpoint, {
+        method: isLiked ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: USER_ID, clothing_id: id }),
+      });
+
+      const updatedFavorites = await res.json();
+      const newLikedState = {};
+      updatedFavorites.forEach((cid) => {
+        newLikedState[cid] = true;
+      });
+      setLikedItems(newLikedState);
+    } catch (err) {
+      console.error("Failed to toggle favorite:", err);
+    }
   };
 
   const confirmDelete = (id) => {
@@ -59,6 +96,11 @@ function ClothingList({ weatherData }) {
           setClothingItems((prevItems) =>
             prevItems.filter((item) => item._id !== id)
           );
+          setLikedItems((prev) => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+          });
         } else {
           console.error("Failed to delete item");
         }
@@ -78,6 +120,17 @@ function ClothingList({ weatherData }) {
     });
   };
 
+  const visibleItems = showOnlyFavorites
+    ? clothingItems.filter((item) => likedItems[item._id])
+    : clothingItems;
+
+  const groupedItems = visibleItems.reduce((acc, item) => {
+    const key = item.clothing_classification;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+
   const handleRecommend = (item) => {
     console.log(`🧭 Navigating to /recommend/${item._id} with weather:`, weatherData);
     
@@ -89,41 +142,63 @@ function ClothingList({ weatherData }) {
   return (
     <div className="wardrobe-container">
       <h1 className="wardrobe-heading">My Wardrobe</h1>
-      <div className="wardrobe-grid">
-        {clothingItems.map((item) => (
-          <div key={item._id} className="wardrobe-item">
-            <button
-              className="delete-icon"
-              onClick={() => confirmDelete(item._id)}
-            >
-              <MdDeleteOutline />
-            </button>
 
-            <img
-              src={item.image_url}
-              alt={item.clothing_classification}
-              className="clothing-image"
-              onClick={() => handleRecommend(item)} // allow clicking image to view recommendation
+      <button
+        className="toggle-favorites-btn"
+        onClick={() => setShowOnlyFavorites((prev) => !prev)}
+      >
+        {showOnlyFavorites ? "Show All" : "Show Favorites"}
+      </button>
+
+      {Object.entries(groupedItems).map(([classification, items]) => (
+        <div key={classification} className="classification-group">
+          <h2 className="classification-heading">{classification}</h2>
+          <div className="wardrobe-grid">
+            {items.map((item) => (
+              <div key={item._id} className="wardrobe-item">
+                <button
+                  className="delete-icon"
+                  onClick={() => confirmDelete(item._id)}
+                >
+                  <MdDeleteOutline />
+                </button>
+
+                <img
+                  src={item.image_url}
+                  alt={item.clothing_classification}
+                  className="clothing-image"
+                  onClick={() => handleRecommend(item)} // allow clicking image to view recommendation
             />
 
-            <button className="heart-icon" onClick={() => toggleLike(item._id)}>
-              {likedItems[item._id] ? (
-                <IoMdHeart color="red" />
-              ) : (
-                <IoMdHeartEmpty />
-              )}
-            </button>
+    
+            <button
+                  className="heart-icon"
+                  onClick={() => toggleLike(item._id)}
+                >
+                  {likedItems[item._id] ? (
+                    <IoMdHeart color="red" />
+                  ) : (
+                    <IoMdHeartEmpty />
+                  )}
+                </button>
 
-            <div className="clothing-info">
-              <p className="clothing-name">{item.clothing_classification}</p>
-              <p className="clothing-class">Color: {item.detected_color}</p>
-              <button className="edit-icon" onClick={() => handleEdit(item)}>
-                <FaEdit />
-              </button>
-            </div>
+                <div className="clothing-info">
+                  <p className="clothing-name">
+                    {item.clothing_classification}
+                  </p>
+                  <p className="clothing-class">Color: {item.detected_color}</p>
+                  <button
+                    className="edit-icon"
+                    onClick={() => handleEdit(item)}
+                  >
+                    <FaEdit />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }
