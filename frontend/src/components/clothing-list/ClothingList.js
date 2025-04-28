@@ -131,14 +131,6 @@ function ClothingList({ weatherData }) {
     return acc;
   }, {});
 
-  const handleRecommend = (item) => {
-    console.log(`🧭 Navigating to /recommend/${item._id} with weather:`, weatherData);
-    
-    navigate(`/recommend/${item._id}`, {
-      state: weatherData // pass weather state to recommendation page
-    });
-  };
-
   return (
     <div className="wardrobe-container">
       <h1 className="wardrobe-heading">My Wardrobe</h1>
@@ -167,7 +159,7 @@ function ClothingList({ weatherData }) {
                   src={item.image_url}
                   alt={item.clothing_classification}
                   className="clothing-image"
-                  onClick={() => handleRecommend(item)} // allow clicking image to view recommendation
+                  onClick={() => handleEdit(item)}
             />
 
     
