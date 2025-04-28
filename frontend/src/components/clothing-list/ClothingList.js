@@ -4,16 +4,23 @@ import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
 import { MdDeleteOutline } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "../../context/LocationContext";
 
-function ClothingList() {
+
+
+function ClothingList({ weatherData }) {
   const [clothingItems, setClothingItems] = useState([]);
   const [likedItems, setLikedItems] = useState({});
+  const { locationData } = useLocation();  
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   const USER_ID = "user123";
   const navigate = useNavigate();
+  console.log("✅ Weather passed to ClothingList:", weatherData);
+
 
   useEffect(() => {
+    console.log("🧥 ClothingList loaded with weatherData:", weatherData);
     const fetchClothingAndFavorites = async () => {
       try {
         const [clothingRes, favoritesRes] = await Promise.all([
@@ -108,6 +115,7 @@ function ClothingList() {
         clothing_classification: item.clothing_classification,
         detected_color: item.detected_color,
         saved_clothing_id: item._id,
+        ...weatherData // pass temperature, lat, lon to detail page if needed
       },
     });
   };
@@ -151,9 +159,11 @@ function ClothingList() {
                   src={item.image_url}
                   alt={item.clothing_classification}
                   className="clothing-image"
-                />
+                  onClick={() => handleEdit(item)}
+            />
 
-                <button
+    
+            <button
                   className="heart-icon"
                   onClick={() => toggleLike(item._id)}
                 >

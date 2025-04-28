@@ -70,9 +70,30 @@ def enhance_image(img):
         bgr, alpha = img[:, :, :3], img[:, :, 3]
     else:
         bgr, alpha = img, None
-    bgr = cv2.convertScaleAbs(bgr, alpha=1.2, beta=20)
-    kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
-    bgr = cv2.filter2D(bgr, -1, kernel)
+
+    # Calculate average brightness
+    brightness = np.mean(cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY))
+
+    # Adaptive enhancement based on brightness
+    if brightness < 100:
+        alpha_factor = 1.3
+        beta = 25
+        sharpen = True
+    elif brightness < 180:
+        alpha_factor = 1.1
+        beta = 10
+        sharpen = True
+    else:
+        alpha_factor = 1.0
+        beta = 0
+        sharpen = False
+
+    bgr = cv2.convertScaleAbs(bgr, alpha=alpha_factor, beta=beta)
+
+    if sharpen:
+        kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+        bgr = cv2.filter2D(bgr, -1, kernel)
+
     return cv2.merge((bgr, alpha)) if alpha is not None else bgr
 
 def add_white_background(rgba_img):

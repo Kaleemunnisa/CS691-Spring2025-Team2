@@ -4,10 +4,12 @@ import axios from "axios";
 import "./imageDetails.css";
 import { FaEdit, FaTimes } from "react-icons/fa";
 import HeaderBar from "../../components/header/HeaderBar";
+import { useLocation as useGlobalLocation } from "../../context/LocationContext";
 
 const ImageDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { locationData } = useGlobalLocation(); // ✅ Use global context
 
     const [imageData, setImageData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -68,8 +70,10 @@ const ImageDetails = () => {
         }
     };
 
-    const handleGenerateRecommendation = async () => {
-        navigate(`/recommendation/${id}`);
+    const handleGenerateRecommendation = () => {
+        navigate(`/recommendation/${id}`, {
+            state: locationData // ✅ Send context along
+        });
     };
 
     const handleCancelEdit = () => {
@@ -114,7 +118,6 @@ const ImageDetails = () => {
                     <button className="save-button" onClick={handleSaveChanges} disabled={!isChanged || isUpdating}>
                         {isUpdating ? "Saving..." : "Save Changes"}
                     </button>
-
                 </div>
             ) : (
                 <div className="details-text">
@@ -139,9 +142,6 @@ const ImageDetails = () => {
                             ⚠️ Please select a valid category to enable recommendations.
                         </p>
                     )}
-
-
-
                 </div>
             )}
         </div>

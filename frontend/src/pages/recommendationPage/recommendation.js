@@ -1,83 +1,98 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useLocation as useGlobalLocation } from "../../context/LocationContext";
 import HeaderBar from "../../components/header/HeaderBar";
 import "./recommendation.css";
 
 const RecommendationPage = () => {
-    const { id } = useParams();
-    const [data, setData] = useState(null);
-    const [error, setError] = useState("");
+  const { id } = useParams();
+  const { locationData } = useGlobalLocation();
 
-    useEffect(() => {
-        const fetchRecommendation = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8000/api/recommendation`, {
-                    params: {
-                        userId: "user123",
-                        clothingId: id,
-                        lat: 40.71,
-                        lon: -74.01
-                    }
-                });
-                setData(response.data);
-            } catch (err) {
-                console.error("❌ Error fetching recommendation:", err);
-                setError("Failed to fetch recommendation.");
-            }
-        };
+  const [data, setData] = useState(null);
+  const [error, setError] = useState("");
 
-        fetchRecommendation();
-    }, [id]);
+  const lat = locationData.lat || 40.71;
+  const lon = locationData.lon || -74.01;
+  const tempOverride = locationData.temperature;
 
-    return (
-        <div className="recommendation-container">
-            <HeaderBar />
-            <div className="recommendation-content">
-                <h2>Outfit Recommendation</h2>
+  useEffect(() => {
+    console.log("📦 Fetching recommendation with lat/lon/temp:", lat, lon, tempOverride);
 
-                {error && <p>{error}</p>}
-                {!error && !data && <p>Fetching recommendation...</p>}
+    const fetchRecommendation = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/api/recommendation`, {
+          params: {
+            userId: "user123",
+            clothingId: id,
+            lat,
+            lon
+          }
+        });
 
-                {data && (
-                    <>
-                        <h3>Temperature: {data.temperature}°C</h3>
+        const result = response.data;
 
-                        <div className="base-item">
-                            <h4>Your Uploaded Item</h4>
-                            <img src={data.base_item.image} alt="Base item" className="item-image" />
-                            <p><strong>{data.base_item.type}</strong> — {data.base_item.color}</p>
-                        </div>
+        // Override temperature if available
+        if (tempOverride !== undefined && tempOverride !== null) {
+          result.temperature = parseFloat(tempOverride);
+        }
 
-                        <div className="rec-section">
-                            <h4>Recommended from Your Wardrobe:</h4>
-                            {data.recommendations.length > 0 ? (
-                                data.recommendations.map((item, index) => (
-                                    <div key={index} className="item-card">
-                                        <img src={item.image_url} alt={item.clothing_classification} className="item-image" />
-                                        <p>{item.clothing_classification} — {item.detected_color}</p>
-                                    </div>
-                                ))
-                            ) : (
-                                <p>No matching items found in wardrobe.</p>
-                            )}
-                        </div>
+        setData(result);
+      } catch (err) {
+        console.error("❌ Error fetching recommendation:", err);
+        setError("Failed to fetch recommendation.");
+      }
+    };
 
-                        <div className="rec-section">
-                            <h4>Suggestions to Complete the Look:</h4>
-                            {data.missing.map((item, index) => (
-                                <div key={index} className="missing-block">
-                                    <p><strong>{item.type.toUpperCase()}</strong></p>
-                                    <p>Options: {item.options.join(", ")}</p>
-                                    <p>Matching Colors: {item.acceptableColors.join(", ")}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </>
-                )}
+    fetchRecommendation();
+  }, [id, lat, lon, tempOverride]);
+
+  return (
+    <div className="recommendation-container">
+      <HeaderBar />
+      <div className="recommendation-content">
+        <h2 className="rec-title">Outfit Recommendation</h2>
+
+        {error && <p>{error}</p>}
+        {!error && !data && <p>Fetching recommendation...</p>}
+
+        {data && (
+          <>
+            <div className="temperature-badge">
+              🌡️ {data.temperature ? `${data.temperature.toFixed(1)}°C` : "N/A"}
             </div>
-        </div>
-    );
+
+            <div className="card-grid">
+              <div className="item-card">
+                <div className="section-label">Your Upload</div>
+                <img src={data.base_item.image} alt="Base item" />
+                <div className="item-title">{data.base_item.type}</div>
+                <div className="item-color">{data.base_item.color}</div>
+              </div>
+
+              {data.recommendations.map((item, index) => (
+                <div key={index} className="item-card">
+                  <div className="section-label">Recommended</div>
+                  <img src={item.image_url} alt={item.clothing_classification} />
+                  <div className="item-title">{item.clothing_classification}</div>
+                  <div className="item-color">{item.detected_color}</div>
+                </div>
+              ))}
+
+              {data.missing.map((item, index) => (
+                <div key={index} className="item-card">
+                  <div className="section-label">Suggested Add-on</div>
+                  <img src={`/fallbacks/black_${item.options[0].toLowerCase()}.png`} alt="addon" />
+                  <div className="item-title">{item.options[0]}</div>
+                  <div className="item-color">● fallback</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default RecommendationPage;

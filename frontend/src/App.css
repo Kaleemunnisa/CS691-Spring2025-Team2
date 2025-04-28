@@ -36,3 +36,40 @@
     transform: rotate(360deg);
   }
 }
+
+.about-page-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  flex-direction: column;
+  background-color: white;
+}
+
+.about-container {
+  background-color: white;
+  border-radius: 20px;
+  padding: 30px 20px;
+  text-align: center;
+  margin-top: 30px;
+  max-width: 800px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.about-container h1 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.about-container p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 15px;
+  text-align: justify;
+}
+

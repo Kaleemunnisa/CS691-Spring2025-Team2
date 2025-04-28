@@ -2,3 +2,4 @@
 /frontend/node_modules
 /backend/.env
 /backend/google_cloud_api.json
+/backend/.DS_Store

@@ -1,4 +1,4 @@
-const { fetchRealTimeWeather } = require("../services/weatherService");
+const  fetchRealTimeWeather  = require("../services/weatherService");
 
 exports.getWeather = async (req, res) => {
     try {
