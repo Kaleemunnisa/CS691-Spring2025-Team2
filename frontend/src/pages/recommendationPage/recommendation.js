@@ -20,25 +20,33 @@ const RecommendationPage = () => {
     const saved = JSON.parse(localStorage.getItem("savedOutfits")) || [];
     const newSave = {
       timestamp: Date.now(),
-      data: data
+      data: data,
     };
     localStorage.setItem("savedOutfits", JSON.stringify([...saved, newSave]));
     navigate("/outfits");
   };
 
   useEffect(() => {
-    console.log("📦 Fetching recommendation with lat/lon/temp:", lat, lon, tempOverride);
+    console.log(
+      "📦 Fetching recommendation with lat/lon/temp:",
+      lat,
+      lon,
+      tempOverride
+    );
 
     const fetchRecommendation = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/recommendation`, {
-          params: {
-            userId: "user123",
-            clothingId: id,
-            lat,
-            lon
+        const response = await axios.get(
+          `http://localhost:8000/api/recommendation`,
+          {
+            params: {
+              userId: "user123",
+              clothingId: id,
+              lat,
+              lon,
+            },
           }
-        });
+        );
 
         const result = response.data;
 
@@ -83,13 +91,28 @@ const RecommendationPage = () => {
               {data.recommendations.map((item, index) => (
                 <div key={index} className="item-card">
                   <div className="section-label">Recommended</div>
-                  <img src={item.image_url} alt={item.clothing_classification} />
-                  <div className="item-title">{item.clothing_classification}</div>
+                  <img
+                    src={item.image_url}
+                    alt={item.clothing_classification}
+                  />
+                  <div className="item-title">
+                    {item.clothing_classification}
+                  </div>
                   <div className="item-color">{item.detected_color}</div>
                 </div>
               ))}
+            </div>
+            <div className="button-stack">
+              <button onClick={saveOutfit} className="save-button">
+                Save Outfit
+              </button>
 
-              <button onClick={saveOutfit} className="save-button">Save Outfit</button>
+              <button
+                onClick={() => navigate("/wardrobe")}
+                className="save-button"
+              >
+                View Wardrobe
+              </button>
             </div>
           </>
         )}
