@@ -46,7 +46,7 @@ The **Weather-Oriented Clothing Recommendation System** will leverage weather fo
 ## **Technology Stack**
 - **Frontend:** React.js 
 - **Backend:** Node.js / Django   
-- **Database:** PostgreSQL / Firebase  
+- **Database:** MongoDB  
 - **Weather API:** OpenWeatherMap / WeatherStack  
 - **AI & ML Models:** TensorFlow / Scikit-learn for recommendation engine  
 - **Cloud Hosting:** AWS / Google Cloud
