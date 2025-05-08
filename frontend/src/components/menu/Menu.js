@@ -16,11 +16,9 @@ function Menu({ isOpen, onClose }) {
       <button className="close-button" onClick={onClose}>
         <IoArrowBackCircleSharp />
       </button>
-
-      <button className="menu-item" onClick={() => handleNavigation("/edit-profile")}>Edit Profile</button>
-      <button className="menu-item" onClick={() => handleNavigation("/tutorial")}>Tutorial</button>
-      <button className="menu-item" onClick={() => handleNavigation("/faq")}>Frequently Asked Questions</button>
-      <button className="menu-item" onClick={() => handleNavigation("/blogs")}>Blogs</button>
+      <button className="menu-item" onClick={() => handleNavigation("/home")}>Home</button>
+      <button className="menu-item" onClick={() => handleNavigation("/wardrobe")}>Wardrobe</button>
+      <button className="menu-item" onClick={() => handleNavigation("/outfits")}>Saved Outfits</button>
       <button className="menu-item" onClick={() => handleNavigation("/about")}>About Us</button>
     </div>
   );

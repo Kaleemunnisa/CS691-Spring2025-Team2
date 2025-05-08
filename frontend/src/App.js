@@ -11,6 +11,7 @@ import UploadPage from "./pages/uploadImage/UploadPage";
 import ImageDetails from "./pages/imageDetails/imageDetails";
 import Wardrobe from "./pages/wardrobe/Wardrobe";
 import HomePage from "./pages/landingpage/homePage";
+import SavedOutfitsPage from "./pages/SavedOutfit";
 import RecommendationPage from "./pages/recommendationPage/recommendation";
 import Profile from "./pages/Profile";
 import AboutUs from './pages/landingpage/AboutUs';
@@ -33,6 +34,7 @@ const App = () => {
               <Route path="/recommendation/:id" element={<RecommendationPage />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/outfits" element={<SavedOutfitsPage />} />
           </Routes>
         </Router>
       </LocationProvider>

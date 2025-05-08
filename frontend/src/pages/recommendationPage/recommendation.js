@@ -16,6 +16,16 @@ const RecommendationPage = () => {
   const lon = locationData.lon || -74.01;
   const tempOverride = locationData.temperature;
 
+  const saveOutfit = () => {
+    const saved = JSON.parse(localStorage.getItem("savedOutfits")) || [];
+    const newSave = {
+      timestamp: Date.now(),
+      data: data
+    };
+    localStorage.setItem("savedOutfits", JSON.stringify([...saved, newSave]));
+    alert("Outfit saved!");
+  };
+
   useEffect(() => {
     console.log("📦 Fetching recommendation with lat/lon/temp:", lat, lon, tempOverride);
 
@@ -79,14 +89,7 @@ const RecommendationPage = () => {
                 </div>
               ))}
 
-              {data.missing.map((item, index) => (
-                <div key={index} className="item-card">
-                  <div className="section-label">Suggested Add-on</div>
-                  <img src={`/fallbacks/black_${item.options[0].toLowerCase()}.png`} alt="addon" />
-                  <div className="item-title">{item.options[0]}</div>
-                  <div className="item-color">● fallback</div>
-                </div>
-              ))}
+              <button onClick={saveOutfit} className="save-button">Save Outfit</button>
             </div>
           </>
         )}
