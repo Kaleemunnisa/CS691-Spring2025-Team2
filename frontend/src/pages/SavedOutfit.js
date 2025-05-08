@@ -47,7 +47,7 @@ const SavedOutfitsPage = () => {
                                 ))}
                             </div>
 
-                            <button onClick={() => deleteOutfit(entry.timestamp)} className="save-button">Delete</button>
+                            <button onClick={() => deleteOutfit(entry.timestamp)} className="delete-button">Delete</button>
                         </div>
                     ))
                 )}

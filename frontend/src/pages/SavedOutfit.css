@@ -71,7 +71,7 @@
   }
   
   /* delete button styling */
-  .save-button {
+  .delete-button {
     margin-top: 16px;
     padding: 12px;
     width: 150px;
@@ -84,7 +84,7 @@
     transition: background 0.3s;
   }
   
-  .save-button:hover {
+  .delete-button:hover {
     background: rgb(150, 0, 0);
   }
   

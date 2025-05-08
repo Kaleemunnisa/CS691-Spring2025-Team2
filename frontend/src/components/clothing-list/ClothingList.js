@@ -11,13 +11,21 @@ import { useLocation } from "../../context/LocationContext";
 function ClothingList({ weatherData }) {
   const [clothingItems, setClothingItems] = useState([]);
   const [likedItems, setLikedItems] = useState({});
-  const { locationData } = useLocation();  
+  const { locationData } = useLocation();
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+  const [collapsedSections, setCollapsedSections] = useState({});
+
 
   const USER_ID = "user123";
   const navigate = useNavigate();
   console.log("✅ Weather passed to ClothingList:", weatherData);
 
+  const toggleSection = (classification) => {
+    setCollapsedSections((prev) => ({
+      ...prev,
+      [classification]: !prev[classification]
+    }));
+  };
 
   useEffect(() => {
     console.log("🧥 ClothingList loaded with weatherData:", weatherData);
@@ -144,54 +152,61 @@ function ClothingList({ weatherData }) {
 
       {Object.entries(groupedItems).map(([classification, items]) => (
         <div key={classification} className="classification-group">
-          <h2 className="classification-heading">{classification}</h2>
-          <div className="wardrobe-grid">
-            {items.map((item) => (
-              <div key={item._id} className="wardrobe-item">
-                <button
-                  className="delete-icon"
-                  onClick={() => confirmDelete(item._id)}
-                >
-                  <MdDeleteOutline />
-                </button>
-
-                <img
-                  src={item.image_url}
-                  alt={item.clothing_classification}
-                  className="clothing-image"
-                  onClick={() => handleEdit(item)}
-            />
-
-    
-            <button
-                  className="heart-icon"
-                  onClick={() => toggleLike(item._id)}
-                >
-                  {likedItems[item._id] ? (
-                    <IoMdHeart color="red" />
-                  ) : (
-                    <IoMdHeartEmpty />
-                  )}
-                </button>
-
-                <div className="clothing-info">
-                  <p className="clothing-name">
-                    {item.clothing_classification}
-                  </p>
-                  <p className="clothing-class">Color: {item.detected_color}</p>
-                  <button
-                    className="edit-icon"
-                    onClick={() => handleEdit(item)}
-                  >
-                    <FaEdit />
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="classification-heading" onClick={() => toggleSection(classification)} style={{ cursor: "pointer" }}>
+            <span>{classification}</span>
+            <span>{collapsedSections[classification] ? "▼" : "▲"}</span>
           </div>
+
+          {!collapsedSections[classification] && (
+        <div className={`wardrobe-grid ${collapsedSections[classification] ? "collapsed" : ""}`}>
+          {items.map((item) => (
+            <div key={item._id} className="wardrobe-item">
+              <button
+                className="delete-icon"
+                onClick={() => confirmDelete(item._id)}
+              >
+                <MdDeleteOutline />
+              </button>
+
+              <img
+                src={item.image_url}
+                alt={item.clothing_classification}
+                className="clothing-image"
+                onClick={() => handleEdit(item)}
+              />
+
+
+              <button
+                className="heart-icon"
+                onClick={() => toggleLike(item._id)}
+              >
+                {likedItems[item._id] ? (
+                  <IoMdHeart color="red" />
+                ) : (
+                  <IoMdHeartEmpty />
+                )}
+              </button>
+
+              <div className="clothing-info">
+                <p className="clothing-name">
+                  {item.clothing_classification}
+                </p>
+                <p className="clothing-class">Color: {item.detected_color}</p>
+                <button
+                  className="edit-icon"
+                  onClick={() => handleEdit(item)}
+                >
+                  <FaEdit />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
+  ))
+}
+    </div >
   );
 }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useLocation as useGlobalLocation } from "../../context/LocationContext";
 import HeaderBar from "../../components/header/HeaderBar";
@@ -8,7 +8,7 @@ import "./recommendation.css";
 const RecommendationPage = () => {
   const { id } = useParams();
   const { locationData } = useGlobalLocation();
-
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
 
@@ -23,7 +23,7 @@ const RecommendationPage = () => {
       data: data
     };
     localStorage.setItem("savedOutfits", JSON.stringify([...saved, newSave]));
-    alert("Outfit saved!");
+    navigate("/outfits");
   };
 
   useEffect(() => {
