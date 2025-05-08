@@ -4,6 +4,7 @@ import axios from "axios";
 import { useLocation as useGlobalLocation } from "../../context/LocationContext";
 import HeaderBar from "../../components/header/HeaderBar";
 import "./recommendation.css";
+import { FaRecycle } from "react-icons/fa";
 
 const RecommendationPage = () => {
   const { id } = useParams();
@@ -17,18 +18,26 @@ const RecommendationPage = () => {
   const tempOverride = locationData.temperature;
 
   useEffect(() => {
-    console.log("📦 Fetching recommendation with lat/lon/temp:", lat, lon, tempOverride);
+    console.log(
+      "📦 Fetching recommendation with lat/lon/temp:",
+      lat,
+      lon,
+      tempOverride
+    );
 
     const fetchRecommendation = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/recommendation`, {
-          params: {
-            userId: "user123",
-            clothingId: id,
-            lat,
-            lon
+        const response = await axios.get(
+          `http://localhost:8000/api/recommendation`,
+          {
+            params: {
+              userId: "user123",
+              clothingId: id,
+              lat,
+              lon,
+            },
           }
-        });
+        );
 
         const result = response.data;
 
@@ -65,6 +74,7 @@ const RecommendationPage = () => {
             <div className="card-grid">
               <div className="item-card">
                 <div className="section-label">Your Upload</div>
+
                 <img src={data.base_item.image} alt="Base item" />
                 <div className="item-title">{data.base_item.type}</div>
                 <div className="item-color">{data.base_item.color}</div>
@@ -73,8 +83,14 @@ const RecommendationPage = () => {
               {data.recommendations.map((item, index) => (
                 <div key={index} className="item-card">
                   <div className="section-label">Recommended</div>
-                  <img src={item.image_url} alt={item.clothing_classification} />
-                  <div className="item-title">{item.clothing_classification}</div>
+                  <FaRecycle className="recycle-icon" />
+                  <img
+                    src={item.image_url}
+                    alt={item.clothing_classification}
+                  />
+                  <div className="item-title">
+                    {item.clothing_classification}
+                  </div>
                   <div className="item-color">{item.detected_color}</div>
                 </div>
               ))}
@@ -82,7 +98,11 @@ const RecommendationPage = () => {
               {data.missing.map((item, index) => (
                 <div key={index} className="item-card">
                   <div className="section-label">Suggested Add-on</div>
-                  <img src={`/fallbacks/black_${item.options[0].toLowerCase()}.png`} alt="addon" />
+                  <FaRecycle className="recycle-icon" />
+                  <img
+                    src={`/fallbacks/black_${item.options[0].toLowerCase()}.png`}
+                    alt="addon"
+                  />
                   <div className="item-title">{item.options[0]}</div>
                   <div className="item-color">● fallback</div>
                 </div>
